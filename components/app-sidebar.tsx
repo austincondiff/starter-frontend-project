@@ -6,7 +6,7 @@ import {
 } from "@tabler/icons-react"
 import Link from "next/link"
 
-import { NavDocuments } from "@/components/nav-documents"
+import { NavRecents } from "@/components/nav-recents"
 import { NavMain } from "@/components/nav-main"
 import { NavSecondary } from "@/components/nav-secondary"
 import { NavUser } from "@/components/nav-user"
@@ -19,7 +19,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
-import { ChartBar, ChartGantt, ChartLine, ChartLineIcon, ChartNoAxesCombined, ChartNoAxesGantt, ClipboardCheck, Folder, Gauge, List, ListTodo, Users, Database, FileCheck, Settings2, CircleHelp, BookOpen, BarChart3, LineChart, PieChart, TrendingUp } from "lucide-react"
+import { ChartGantt, ChartLine,ClipboardCheck, Folder, Gauge, ListTodo, Users, Database, FileCheck, Settings2, CircleHelp, BookOpen } from "lucide-react"
 
 const data = {
   user: {
@@ -62,7 +62,7 @@ const data = {
     },
     {
       title: "Projects",
-      url: "#",
+      url: "/projects",
       icon: Folder,
     },
     {
@@ -154,7 +154,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
-        <NavDocuments items={data.documents} />
+        <NavRecents items={data.documents} />
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>

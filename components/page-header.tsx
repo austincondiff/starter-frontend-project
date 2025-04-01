@@ -23,12 +23,15 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { useEffect, useState } from "react"
 
-export function SiteHeader({ title, largeTitle = true }: { title: string, largeTitle?: boolean }) {
+export function PageHeader({ title, largeTitle = true }: { title: string, largeTitle?: boolean }) {
   const [showTitle, setShowTitle] = useState(false)
   const [showBorder, setShowBorder] = useState(false)
 
   useEffect(() => {
     const handleScroll = () => {
+      // Don't update state if body is scroll locked
+      if (document.body.getAttribute('data-scroll-locked')) return
+      
       setShowTitle(window.scrollY >= 36)
       setShowBorder(window.scrollY > 0)
     }
@@ -44,7 +47,8 @@ export function SiteHeader({ title, largeTitle = true }: { title: string, largeT
           <SidebarTrigger className="-ml-1" />
           <Separator
             orientation="vertical"
-            className="mx-2 data-[orientation=vertical]:h-4"
+            className="mx-2 data-[orientation=vertical]:h-4 transition-opacity duration-200" 
+            style={{ opacity: showTitle ? 1 : 0 }}
           />
           <h1 className="text-sm md:text-base font-medium transition-opacity duration-200" style={{ opacity: showTitle ? 1 : 0 }}>{title}</h1>
           <div className="ml-auto flex items-center gap-1 md:gap-2">

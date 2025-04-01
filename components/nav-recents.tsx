@@ -26,7 +26,7 @@ import {
 } from "@/components/ui/sidebar"
 import { type LucideIcon } from "lucide-react"
 
-export function NavDocuments({
+export function NavRecents({
   items,
 }: {
   items: {
@@ -39,7 +39,7 @@ export function NavDocuments({
 
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
-      <SidebarGroupLabel>Documents</SidebarGroupLabel>
+      <SidebarGroupLabel>Recents</SidebarGroupLabel>
       <SidebarMenu>
         {items.map((item) => (
           <SidebarMenuItem key={item.name}>

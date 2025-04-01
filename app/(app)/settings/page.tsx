@@ -38,7 +38,7 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs"
-import { SiteHeader } from "@/components/site-header"
+import { PageHeader } from "@/components/page-header"
 export const metadata: Metadata = {
   title: "Settings",
   description: "Manage your account settings",
@@ -129,7 +129,7 @@ const activeSessions = [
 export default function SettingsPage() {
   return (
     <>
-    <SiteHeader title="Settings" />
+    <PageHeader title="Settings" />
     <div className="@container/page flex flex-1 flex-col gap-4 p-6">
       <Tabs defaultValue="account" className="gap-6">
         <div
