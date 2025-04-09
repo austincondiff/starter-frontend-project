@@ -5,6 +5,7 @@ import {
   IconInnerShadowTop,
 } from "@tabler/icons-react"
 import Link from "next/link"
+import { useSidebar, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 
 import { NavRecents } from "@/components/nav-recents"
 import { NavMain } from "@/components/nav-main"
@@ -18,8 +19,10 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarInset,
 } from "@/components/ui/sidebar"
-import { ChartGantt, ChartLine,ClipboardCheck, Folder, Gauge, ListTodo, Users, Database, FileCheck, Settings2, CircleHelp, BookOpen } from "lucide-react"
+import { ChartGantt, ChartLine,ClipboardCheck, Folder, Gauge, ListTodo, Users, Database, FileCheck, Settings2, CircleHelp, BookOpen, Music, ChevronRight, Calendar, Mail, MessageCircle } from "lucide-react"
+import { ReactNode, useEffect } from "react"
 
 const data = {
   user: {
@@ -35,7 +38,7 @@ const data = {
     },
     {
       title: "Lifecycle",
-      url: "#",
+      url: "/lifecycle",
       icon: ListTodo,
     },
     {
@@ -67,17 +70,17 @@ const data = {
     },
     {
       title: "Roadmap",
-      url: "#",
+      url: "/roadmap",
       icon: ChartGantt,
     },
     {
       title: "Reports",
-      url: "#",
+      url: "/reports",
       icon: ClipboardCheck,
     },
     {
       title: "Team",
-      url: "#",
+      url: "/team",
       icon: Users,
     },
     {
@@ -86,21 +89,41 @@ const data = {
       items: [
         {
           title: "Introduction",
-          url: "#",
+          url: "/documentation",
         },
         {
           title: "Get Started",
-          url: "#",
+          url: "/documentation/get-started",
         },
         {
           title: "Tutorials",
-          url: "#",
+          url: "/documentation/tutorials",
         },
         {
           title: "Changelog",
-          url: "#",
+          url: "/documentation/changelog",
         },
       ],
+    },
+    {
+      title: "Music",
+      url: "/music",
+      icon: Music,
+    },
+    {
+      title: "Calendar",
+      url: "/calendar",
+      icon: Calendar,
+    },
+    {
+      title: "Mail",
+      url: "/mail",
+      icon: Mail,
+    },
+    {
+      title: "Messages",
+      url: "/messages",
+      icon: MessageCircle,
     },
   ],
   navSecondary: [
@@ -111,55 +134,145 @@ const data = {
     },
     {
       title: "Get Help",
-      url: "#",
+      url: "/help",
       icon: CircleHelp,
     },
   ],
   documents: [
     {
       name: "Data Library",
-      url: "#",
+      url: "/data-library",
       icon: Database,
     },
     {
       name: "Reports",
-      url: "#",
+      url: "/reports",
       icon: ClipboardCheck,
     },
     {
-      name: "Word Assistant",
-      url: "#",
+      name: "File Assistant",
+      url: "/file-assistant",
       icon: FileCheck,
     },
   ],
 }
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+function IconSidebar({ pageSidebar, parentOpen, onOpenChange }: { 
+  pageSidebar: ReactNode, 
+  parentOpen: boolean,
+  onOpenChange: (open: boolean) => void 
+}) {
+  const { setOpen, toggleSidebar, open } = useSidebar()
+  const setOpenRef = React.useRef(setOpen)
+
+  // Update the ref when setOpen changes
+  React.useEffect(() => {
+    setOpenRef.current = setOpen
+  }, [setOpen])
+
+  const hasPageSidebar = !!pageSidebar
+
+  useEffect(() => {
+    console.log("IconSidebar useEffect", { hasPageSidebar, parentOpen })
+    
+    // If parent is closed, always close the sidebar
+    if (!parentOpen) {
+      setOpenRef.current(false)
+      return
+    }
+
+    // If parent is open
+    if (!hasPageSidebar) {
+      // If there's no page sidebar, open the sidebar
+      setOpenRef.current(true)
+    } else {
+      // If there is a page sidebar, close the sidebar
+      setOpenRef.current(false)
+    }
+  }, [hasPageSidebar, parentOpen])
+
+  useEffect(() => {
+    setOpenRef.current(!pageSidebar)
+  }, [pageSidebar])
+
+  // Notify parent of open state changes
+  useEffect(() => {
+    onOpenChange(open)
+  }, [open, onOpenChange])
+
   return (
-    <Sidebar collapsible="icon" {...props}>
-      <SidebarHeader>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton
-              asChild
-              className="data-[slot=sidebar-menu-button]:!p-2.5"
-            >
-              <Link href="/">
-                <IconInnerShadowTop className="!size-5 mr-[-2px]" />
-                <span className="text-base font-semibold">Acme Inc.</span>
-              </Link>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarHeader>
-      <SidebarContent>
-        <NavMain items={data.navMain} />
-        <NavRecents items={data.documents} />
-        <NavSecondary items={data.navSecondary} className="mt-auto" />
-      </SidebarContent>
-      <SidebarFooter>
-        <NavUser user={data.user} />
-      </SidebarFooter>
-    </Sidebar>
+    <>
+      <Sidebar collapsible="icon">
+        <SidebarHeader>
+          <SidebarMenu className="px-3">
+            <SidebarMenuItem className="flex items-center justify-between overflow-hidden">
+              <SidebarMenuButton
+                asChild
+                className="data-[slot=sidebar-menu-button]:!p-2.5"
+              >
+                <Link href="/">
+                  <IconInnerShadowTop className="!size-5 mr-[-2px]" />
+                  <span className="text-base font-semibold">Acme Inc.</span>
+                </Link>
+              </SidebarMenuButton>
+              {pageSidebar ? <SidebarTrigger icon={ChevronRight} /> : undefined}
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarHeader>
+        <SidebarContent>
+          <NavMain items={data.navMain} />
+          <NavRecents items={data.documents} />
+          <NavSecondary items={data.navSecondary} className="mt-auto" />
+        </SidebarContent>
+        <SidebarFooter>
+          <NavUser user={data.user} />
+        </SidebarFooter>
+      </Sidebar>
+      <SidebarInset className="bg-sidebar overflow-hidden">
+        {pageSidebar}
+      </SidebarInset>
+    </>
+  )
+}
+
+export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const { state, pageSidebar, open: parentOpen } = useSidebar()
+  const [iconSidebarOpen, setIconSidebarOpen] = React.useState(!pageSidebar)
+  
+  console.log("AppSidebar render", { state, pageSidebar, parentOpen, iconSidebarOpen })
+
+  const sidebarWidth = iconSidebarOpen 
+    ? "calc(var(--spacing)*72)"
+    : pageSidebar 
+      ? "calc((var(--spacing)*72) + var(--sidebar-width-icon))" 
+      : "calc(var(--spacing)*72)"
+
+  return (
+    <div 
+      style={{
+        display: "contents",
+        "--sidebar-width": sidebarWidth,
+      } as React.CSSProperties}
+    >
+      <Sidebar
+        collapsible="icon" 
+        className="overflow-hidden [&>[data-sidebar=sidebar]]:flex-row"
+        {...props}
+      >
+        <SidebarProvider 
+          defaultOpen={!pageSidebar} 
+          style={{
+            "--header-height": "calc(var(--spacing)*16)",
+            "--sidebar-width": sidebarWidth,
+          } as React.CSSProperties}
+        >
+          <IconSidebar 
+            pageSidebar={pageSidebar} 
+            parentOpen={parentOpen} 
+            onOpenChange={setIconSidebarOpen}
+          />
+        </SidebarProvider>
+      </Sidebar>
+    </div>
   )
 }

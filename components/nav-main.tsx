@@ -15,6 +15,7 @@ import {
   SidebarMenuItem,
   SidebarMenuSub,
   SidebarMenuSubItem,
+  SidebarMenuSubButton,
   useSidebar,
 } from "@/components/ui/sidebar"
 import {
@@ -73,37 +74,48 @@ export function NavMain({
               (state === "expanded" || isMobile) ? (
                 <Collapsible
                   key={item.title}
-                  asChild
-                  defaultOpen={item.isActive}
+                  defaultOpen={item.isActive ?? false}
                   className="group/collapsible"
                 >
-                  <SidebarMenuItem>
-                    <CollapsibleTrigger asChild>
-                      <SidebarMenuButton tooltip={item.title}>
-                        {item.icon && <item.icon />}
-                        <span>{item.title}</span>
-                        <ChevronDown className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:scale-y-[-1]" />
-                      </SidebarMenuButton>
-                    </CollapsibleTrigger>
-                    <CollapsibleContent forceMount>
-                      <SidebarMenuSub className="h-0 group-data-[state=open]/collapsible:h-auto overflow-hidden transition-all duration-200 ease-out">
-                        {item.items.map((subItem) => (
-                          <SidebarMenuSubItem key={subItem.title}>
-                            <SidebarMenuButton size="sm" asChild>
-                              <Link href={subItem.url}>
-                                <span>{subItem.title}</span>
-                              </Link>
-                            </SidebarMenuButton>
-                          </SidebarMenuSubItem>
-                        ))}
-                      </SidebarMenuSub>
-                    </CollapsibleContent>
-                  </SidebarMenuItem>
+                  {({ open }) => (
+                    <SidebarMenuItem>
+                      <CollapsibleTrigger asChild>
+                        <SidebarMenuButton 
+                          tooltip={item.title}
+                          isActive={item.isActive || (!open && item.items?.some(subItem => pathname === subItem.url))}
+                        >
+                          {item.icon && <item.icon />}
+                          <span>{item.title}</span>
+                          <ChevronDown className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:scale-y-[-1]" />
+                        </SidebarMenuButton>
+                      </CollapsibleTrigger>
+                      <CollapsibleContent forceMount>
+                        <SidebarMenuSub className="h-0 group-data-[state=open]/collapsible:h-auto overflow-hidden transition-all duration-200 ease-out">
+                          {item.items?.map((subItem) => (
+                            <SidebarMenuSubItem key={subItem.title}>
+                              <SidebarMenuSubButton 
+                                size="sm" 
+                                isActive={pathname === subItem.url} 
+                                asChild
+                              >
+                                <Link href={subItem.url}>
+                                  <span>{subItem.title}</span>
+                                </Link>
+                              </SidebarMenuSubButton>
+                            </SidebarMenuSubItem>
+                          ))}
+                        </SidebarMenuSub>
+                      </CollapsibleContent>
+                    </SidebarMenuItem>
+                  )}
                 </Collapsible>
               ) : (
                 <DropdownMenu key={item.title}>
                   <DropdownMenuTrigger asChild>
-                    <SidebarMenuButton tooltip={item.title}>
+                    <SidebarMenuButton 
+                      tooltip={item.title}
+                      isActive={state === "collapsed" && item.items?.some(subItem => pathname === subItem.url)}
+                    >
                       {item.icon && <item.icon />}
                       <span className="sr-only">{item.title}</span>
                     </SidebarMenuButton>
